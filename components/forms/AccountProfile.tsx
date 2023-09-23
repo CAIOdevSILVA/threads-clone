@@ -8,6 +8,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +17,8 @@ import { ChangeEvent, useState } from "react";
 import { Textarea } from "../ui/textarea";
 import { isBase64Image } from "@/lib/utils";
 import { useUploadThing } from "@/lib/uploadthing"
+import { updateUser } from "@/lib/actions/users.actions";
+import { usePathname, useRouter } from "next/navigation";
 
 import Image from "next/image";
 import * as z from "zod";
@@ -33,6 +36,8 @@ interface AccountProfileProps {
 }
 
 const AccountProfile = ({ user, btnTitle }: AccountProfileProps) => {
+  const router = useRouter();
+  const pathname = usePathname();
   const [files, setFile] = useState<File[]>([]);
   const { startUpload } = useUploadThing("media");
 
@@ -81,7 +86,20 @@ const AccountProfile = ({ user, btnTitle }: AccountProfileProps) => {
       }
     }
 
-    
+    await updateUser({
+      userId: user.id,
+      username: values.username,
+      name: values.name,
+      bio: values.bio,
+      image: values.profile_photo,
+      path: pathname,
+    });
+
+    if(pathname === "/profile/edit"){
+      router.back();
+    }else{
+      router.push("/");
+    }
   };
 
   return (
@@ -125,6 +143,7 @@ const AccountProfile = ({ user, btnTitle }: AccountProfileProps) => {
                     onChange={(e) => handleImage(e, field.onChange)}
                   />
                 </FormControl>
+                <FormMessage/>{/*FormMessage é onde as mensagens de erro serão mostradas*/}
               </FormItem>
             )}
           />
@@ -144,6 +163,7 @@ const AccountProfile = ({ user, btnTitle }: AccountProfileProps) => {
                     {...field} 
                   />
                 </FormControl>
+                <FormMessage/>{/*FormMessage é onde as mensagens de erro serão mostradas*/}
               </FormItem>
             )}
           />
@@ -163,6 +183,7 @@ const AccountProfile = ({ user, btnTitle }: AccountProfileProps) => {
                     {...field} 
                   />
                 </FormControl>
+                <FormMessage/>{/*FormMessage é onde as mensagens de erro serão mostradas*/}
               </FormItem>
             )}
           />
@@ -182,6 +203,7 @@ const AccountProfile = ({ user, btnTitle }: AccountProfileProps) => {
                     {...field} 
                   />
                 </FormControl>
+                <FormMessage/>{/*FormMessage é onde as mensagens de erro serão mostradas*/}
               </FormItem>
             )}
           />
