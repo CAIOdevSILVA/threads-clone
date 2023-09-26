@@ -1,8 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import User from "../models/user.model";
 import { connectToDb } from "../mongoose";
+
+import User from "../models/user.model";
+import Thread from "../models/thread.model";
 
 interface UpdateUserParams {
   userId: string,
@@ -37,7 +39,7 @@ export async function updateUser({
         upsert: true
       }
     );
-  
+
     if(path === "/profile/edit"){
       revalidatePath(path);
     }
@@ -56,8 +58,33 @@ export async function fetchUser(userId: string){
     //   path: "communities",
     //   model: Community
     // });
-    
+
   } catch (error: any) {
     throw new Error(`Failed to fetch user: ${error.message}`);
   }
+}
+
+export async function fetchUserThreads(userId: string) {
+	try {
+		connectToDb();
+
+		const threads = await User.findOne({ id: userId })
+		.populate({
+			path: "threads",
+			model: Thread,
+			populate: {
+				path: "children",
+				model: Thread,
+				populate: {
+					path: "author",
+					model: User,
+					select: "name image id"
+				}
+			}
+		});
+
+		return threads;
+	} catch (error:any) {
+		throw new Error(`Failed to fetch user: ${error.message}`);
+	}
 }
