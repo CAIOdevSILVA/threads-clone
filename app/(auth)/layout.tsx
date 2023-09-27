@@ -20,8 +20,8 @@ const RootLayout = ({children}: RootLayoutProps) => {
   return (
     <ClerkProvider >
       <html lang='en'>
-        <body className={`${inter.className} bg-dark-1`}>
-          {children}
+        <body className={`${inter.className} bg-dark-1 w-full flex justify-center items-center h-screen`}>
+						{children}
         </body>
       </html>
     </ClerkProvider>
