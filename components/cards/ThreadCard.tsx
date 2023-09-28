@@ -98,8 +98,9 @@ const ThreadCard = ({
         </div>
 				{/*Delete Thread*/ }
 				{/*Show the community logo*/ }
+      </div>
 				{!isComment && community && (
-					<Link href={`/communities/${community?.id}`}>
+					<Link href={`/communities/${community?.id}`} className="mt-5 flex items-center">
 						<p className="text-subtle-medium text-gray-1">
 							{formatDateString(createdAt)} - {community?.name} Community
 						</p>
@@ -112,7 +113,6 @@ const ThreadCard = ({
 						/>
 					</Link>
         )}
-      </div>
     </article>
   )
 }

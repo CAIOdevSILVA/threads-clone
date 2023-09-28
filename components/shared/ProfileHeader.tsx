@@ -7,10 +7,11 @@ interface ProfileHeaderProps {
 	username: string;
 	imgUrl: string;
 	bio: string;
+	type?: "User" | "Community";
 }
 
 const ProfileHeader = ({
-	accountId, authUserId, name, username, bio, imgUrl
+	accountId, authUserId, name, username, bio, imgUrl, type
 }:ProfileHeaderProps) => {
 	return (
 		<>
