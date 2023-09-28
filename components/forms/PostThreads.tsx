@@ -13,11 +13,11 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Textarea } from "../ui/textarea";
 import { usePathname, useRouter } from "next/navigation";
-// import { updateUser } from "@/lib/actions/users.actions";
 import { ThreadValidation } from "@/lib/validatitions/thread";
+import { createThread } from "@/lib/actions/thread.actions";
+import { useOrganization } from "@clerk/nextjs";
 
 import * as z from "zod";
-import { createThread } from "@/lib/actions/thread.actions";
 
 interface AccountProfileProps {
   user: {
@@ -38,6 +38,7 @@ interface PostThreadsProps {
 const PostThreads = ({ userId }: PostThreadsProps) => {
   const router = useRouter();
   const pathname = usePathname();
+	const { organization } = useOrganization();
 
   const form = useForm({
     resolver: zodResolver(ThreadValidation),
@@ -46,23 +47,25 @@ const PostThreads = ({ userId }: PostThreadsProps) => {
       accountId: userId,
     },
   });
-  
+
   const onSubmit = async(values: z.infer<typeof ThreadValidation>) => {
+
     await createThread({
       text: values.thread,
       author: userId,
-      communityId: null,
+      communityId: organization ? organization?.id : null,
       path: pathname
     });
 
     router.push('/');
   }
 
+
   return (
     <>
       <Form {...form}>
-        <form 
-          onSubmit={form.handleSubmit(onSubmit)} 
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
           className="mt-10 flex flex-col justify-start gap-10"
         >
           <FormField
@@ -74,9 +77,9 @@ const PostThreads = ({ userId }: PostThreadsProps) => {
                   Content
                 </FormLabel>
                 <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
-                  <Textarea 
+                  <Textarea
                     rows={15}
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage/>{/*FormMessage é onde as mensagens de erro serão mostradas*/}
